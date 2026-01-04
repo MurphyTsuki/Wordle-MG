@@ -101,7 +101,7 @@ h1 {
 }
 
 .key.correct { background: #538d4e; }
-.key.present { background: #b59f3b; }
+.key.present { background: #cd8729; }
 .key.absent {
   background: #3a3a3c;
   cursor: not-allowed;
@@ -117,3 +117,94 @@ h1 {
   filter: brightness(0.85);
 }
 
+#title {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 20px 0;
+}
+
+.box {
+  width: 38px;
+  height: 38px;
+  border: 2px solid #3a3a3c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.box.yellow {
+  background: #cd8729;
+  border-color: #cd8729;
+}
+
+.box.green {
+  background: #538d4e;
+  border-color: #538d4e;
+}
+
+.box.glass {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.space {
+  width: 10px;
+}
+
+/* Supprime le vide noir par défaut du navigateur */
+body {
+  margin: 0;
+}
+
+/* Separator style bande grise simple */
+.separator {
+  background: #2a2a26; /* gris clair uniforme */
+  padding: 10px 0; /* 10px haut / bas */
+  margin-bottom: 16px;
+  width: 100vw;           /* force pleine largeur */
+  margin-left: calc(50% - 50vw); /* full-bleed même dans un container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Titre compact */
+#title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+}
+
+/* Lettres compactes */
+.box {
+  width: 32.5px;
+  height: 32.5px;
+  border-radius: 5px;
+  background: #121213;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 17.5px;
+}
+
+/* Couleurs type Wordle */
+.box.green {
+  background: #538d4e;
+}
+
+.box.yellow {
+  background: #cd8729;
+}
+
+/* Espaces entre mots */
+.space {
+  width: 10px;
+}
