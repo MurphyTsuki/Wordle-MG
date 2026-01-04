@@ -7,30 +7,53 @@
 </head>
 <body>
 
-<div class="separator">
-	<h1 id="title">
-		<span class="box">N</span>
-		<span class="box">Y</span>
-		<span class="space"></span>
-		<span class="box green">T</span>
-		<span class="box">E</span>
-		<span class="box">N</span>
-		<span class="box">Y</span>
-		<span class="space"></span>
-		<span class="box yellow">A</span>
-		<span class="box">N</span>
-		<span class="box">I</span>
-		<span class="box">O</span>
-	</h1>
-</div>
+  <div id="welcome" class="welcome hidden">
+    <div class="welcome-box">
+      <h2>Ny Teny Anio</h2>
+      <p>Devine le mot malgache en <strong>6 essais</strong>.</p>
+      
+      <ul class="rules">
+        <li><span class="rule-tile correct"></span> Lettre bien placée</li>
+        <li><span class="rule-tile present"></span> Lettre mal placée</li>
+        <li><span class="rule-tile absent"></span> Lettre absente</li>
+      </ul>
+      
+      <p>Un nouveau mot à chaque visite.</p>
+      <button id="startGame">Hanomboka</button>
+    </div>
+  </div>
 
-  
+  <div class="separator">
+    <h1 id="title">
+		<div class="title-inner">
+			<span class="box">N</span>
+			<span class="box">Y</span>
+			<span class="space"></span>
+			<span class="box green">T</span>
+			<span class="box">E</span>
+			<span class="box">N</span>
+			<span class="box">Y</span>
+			<span class="space"></span>
+			<span class="box yellow">A</span>
+			<span class="box">N</span>
+			<span class="box">I</span>
+			<span class="box">O</span>
+			<span class="space"></span>
+			<button id="toggleLayout" class="help-btn">Q</button>
+			<button id="openWelcome" class="help-btn">?</button>
+		</div>
+    </h1>
+  </div>
+
   <div id="message"></div>
   
   <div id="grid"></div>
 
   <div id="keyboard"></div>
 
-  <script src="script.js"></script>
+	<script src="mots_gasy.js"></script>
+	<script src="script.js"></script>
+
+
 </body>
 </html>
