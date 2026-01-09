@@ -1,39 +1,42 @@
 /* =========================================
-   1. VARIABLES & CONFIGURATION
+   1. VARIABLES & CONFIGURATION (DARK MODE FORCÉ)
    ========================================= */
 
-/* Déclaration de la police */
 @font-face {
-    font-family: 'RadamaDisplayDemo'; /* Nom exact déclaré */
-    src: url('RadamaDisplayDemo.otf') format('opentype'); /* Format corrigé pour .otf */
+    font-family: 'RadamaDisplayDemo';
+    src: url('RadamaDisplayDemo.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
 }
 
 :root {
-    --bg-color: #ffffff;
-    --text-color: #121213;
-    --border-color: #d3d6da;
-    --key-bg: #d3d6da;
-    --grid-bg: #ffffff;
+    /* On utilise directement les couleurs sombres ici */
+    --bg-color: #121213;
+    --text-color: #ffffff;
+    --border-color: #3a3a3c;
+    --key-bg: #818384;
+    --grid-bg: #121213;
+
+    /* Couleurs d'état (Vert, Jaune, Gris) */
     --color-correct: #538d4e;
     --color-present: #b59f3b;
     --color-absent: #3a3a3c;
     --color-ui-yellow: #b59f3b;
     --color-error: #f85149;
-    
-    /* CORRECTION : Le nom doit être identique à celui du @font-face ci-dessus */
+
     --main-font: 'RadamaDisplayDemo', Arial, sans-serif;
 }
 
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    transition: background-color 0.3s ease, color 0.3s ease;
-    font-family: var(--main-font); /* Applique la police au texte général */
+    font-family: var(--main-font);
+    margin: 0;
+    /* On s'assure que tout l'écran est couvert */
+    min-height: 100vh; 
 }
 
-/* Force l'application sur les éléments qui ont souvent leur propre police par défaut */
+/* Application de la police sur les éléments spécifiques */
 h1, h2, .cell, .key, button, #countdown {
     font-family: var(--main-font) !important;
 }
