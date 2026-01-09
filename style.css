@@ -1,45 +1,42 @@
 /* =========================================
    1. VARIABLES & CONFIGURATION
    ========================================= */
-/* Couleurs par défaut (Mode Clair) */
+
+/* Déclaration de la police */
 @font-face {
-    font-family: 'RadamaDisplayDemo';
-    src: url('RadamaDisplayDemo.otf') format('truetype');
+    font-family: 'RadamaDisplayDemo'; /* Le nom que vous donnez à la police */
+    src: url('RadamaDisplayDemo.otf') format('opentype'); /* Correction du format pour .otf */
     font-weight: normal;
     font-style: normal;
 }
 
-
 :root {
+    /* Couleurs */
     --bg-color: #ffffff;
     --text-color: #121213;
     --border-color: #d3d6da;
     --key-bg: #d3d6da;
     --grid-bg: #ffffff;
-   --color-correct: #538d4e;   /* Vert */
-    --color-present: #b59f3b;   /* Jaune */
-    --color-absent: #3a3a3c;    /* Gris foncé */
-    --color-ui-yellow: #b59f3b; /* Jaune pour le clavier */
-    --color-error: #f85149;     /* Rouge pour les erreurs */
-   --main-font: 'Display', Arial, sans-serif;
-}
+    --color-correct: #538d4e;
+    --color-present: #b59f3b;
+    --color-absent: #3a3a3c;
+    --color-ui-yellow: #b59f3b;
+    --color-error: #f85149;
 
-/* Couleurs pour le Mode Sombre (détecté automatiquement) */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-color: #121213;
-        --text-color: #ffffff;
-        --border-color: #3a3a3c;
-        --key-bg: #818384;
-        --grid-bg: #121213;
-    }
+    /* Correction du nom ici pour correspondre à @font-face */
+    --main-font: 'RadamaDisplayDemo', Arial, sans-serif;
 }
 
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    transition: background-color 0.3s ease, color 0.3s ease; /* Transition douce */
-   font-family: var(--main-font);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: var(--main-font); /* Applique la police à tout le corps */
+}
+
+/* On force l'application sur les éléments spécifiques qui ont parfois leur propre police par défaut */
+button, input, .cell, .key, .welcome-box h2 {
+    font-family: var(--main-font);
 }
 
 /* =========================================
