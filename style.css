@@ -8,6 +8,11 @@
     --border-color: #d3d6da;
     --key-bg: #d3d6da;
     --grid-bg: #ffffff;
+   --color-correct: #538d4e;   /* Vert */
+    --color-present: #b59f3b;   /* Jaune */
+    --color-absent: #3a3a3c;    /* Gris foncé */
+    --color-ui-yellow: #b59f3b; /* Jaune pour le clavier */
+    --color-error: #f85149;     /* Rouge pour les erreurs */
 }
 
 /* Couleurs pour le Mode Sombre (détecté automatiquement) */
