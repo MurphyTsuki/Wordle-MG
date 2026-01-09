@@ -2,6 +2,14 @@
    1. VARIABLES & CONFIGURATION
    ========================================= */
 /* Couleurs par défaut (Mode Clair) */
+@font-face {
+    font-family: 'RadamaDisplay';
+    src: url('RadamaDisplayDemo.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
 :root {
     --bg-color: #ffffff;
     --text-color: #121213;
@@ -13,6 +21,7 @@
     --color-absent: #3a3a3c;    /* Gris foncé */
     --color-ui-yellow: #b59f3b; /* Jaune pour le clavier */
     --color-error: #f85149;     /* Rouge pour les erreurs */
+   --main-font: 'RadamaDisplay', Arial, sans-serif;
 }
 
 /* Couleurs pour le Mode Sombre (détecté automatiquement) */
@@ -30,7 +39,7 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease; /* Transition douce */
-    /* ... vos autres styles ... */
+   font-family: var(--main-font);
 }
 
 /* =========================================
@@ -58,6 +67,7 @@ body {
 /* Animation de la boîte */
 .welcome-box {
   background: #1e1e1f;
+  font-family: var(--main-font);
   background-color: var(--bg-color);
   color: var(--text-color);
   border: 1px solid var(--border-color);
@@ -255,7 +265,8 @@ h1 {
 }
 
 .key {
-  margin: 2px;
+  font-family: var(--main-font);
+   margin: 2px;
   padding: 10px;
   min-width: 32px;
   background: var(--key-bg);
