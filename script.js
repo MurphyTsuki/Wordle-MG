@@ -10,7 +10,15 @@ let SECRET_WORD = "";
 let isAzerty = true; 
 
 function setupWordData() {
-  if (typeof MOTS_MALGACHES !== 'undefined') {
+  const today = new Date().toLocaleDateString();
+  
+  // Si le joueur a déjà gagné aujourd'hui
+  if (stats.lastPlayedDate === today && stats.currentStreak > 0) {
+    // Vous pouvez ici désactiver le clavier ou afficher un message
+    console.log("Reviens demain pour un nouveau mot !");
+  }
+   
+   if (typeof MOTS_MALGACHES !== 'undefined') {
     SOLUTIONS = MOTS_MALGACHES;
     ALLOWED_WORDS = MOTS_MALGACHES;
     SECRET_WORD = SOLUTIONS[Math.floor(Math.random() * SOLUTIONS.length)];
@@ -23,6 +31,14 @@ function setupWordData() {
 /* =========================================
    2. ÉTAT DU JEU & ÉLÉMENTS DOM
    ========================================= */
+// Initialisation des statistiques
+let stats = JSON.parse(localStorage.getItem("wordle_stats")) || {
+  gamesPlayed: 0,
+  gamesWon: 0,
+  currentStreak: 0,
+  lastPlayedDate: null // Pour vérifier si le joueur a joué aujourd'hui
+};
+
 let currentRow = 0;
 let currentCol = 0;
 let grid = [];
@@ -198,18 +214,20 @@ function submitGuess() {
 
   checkGuess(guess);
 
+  // --- VICTOIRE ---
   if (guess === SECRET_WORD) {
-    setTimeout(() => alert("🎉 Bravo !"), 1000);
     isGameOver = true;
+    setTimeout(() => updateStats(true), 1500); // Appelle l'étape 2/4
     return;
   }
 
   currentRow++;
   currentCol = 0;
 
+  // --- DÉFAITE ---
   if (currentRow === MAX_TRIES) {
-    setTimeout(() => alert(`❌ Perdu ! Mot : ${SECRET_WORD}`), 1000);
     isGameOver = true;
+    setTimeout(() => updateStats(false), 1500); // Appelle l'étape 2/4
   }
 }
 
@@ -246,9 +264,45 @@ function handleVirtualKey(letter) {
   addLetter(letter);
 }
 
+function updateStats(isWin) {
+  const today = new Date().toLocaleDateString();
+  
+  // Si le joueur a déjà joué aujourd'hui, on peut choisir de ne pas compter 
+  // (ou de compter si vous autorisez plusieurs parties par jour)
+  stats.gamesPlayed++;
+  
+  if (isWin) {
+    stats.gamesWon++;
+    stats.currentStreak++;
+  } else {
+    stats.currentStreak = 0;
+  }
+
+  stats.lastPlayedDate = today;
+  localStorage.setItem("wordle_stats", JSON.stringify(stats));
+  
+  showStatsAlert(isWin);
+}
+
 /* =========================================
    6. UTILITAIRES
    ========================================= */
+
+function showStatsAlert(isWin) {
+  const title = isWin ? "🎉 Bravo !" : `❌ Perdu ! Le mot était : ${SECRET_WORD}`;
+  
+  // Construction du message avec les données de l'objet 'stats'
+  const message = `
+    ${title}
+    
+    📊 Statistiques :
+    • Parties jouées : ${stats.gamesPlayed}
+    • Victoires : ${stats.gamesWon}
+    • Série actuelle : ${stats.currentStreak} 🔥
+  `;
+  
+  alert(message);
+}
 
 function updateKeyboardColors(guess, result) {
   for (let i = 0; i < guess.length; i++) {
