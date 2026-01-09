@@ -4,14 +4,13 @@
 
 /* Déclaration de la police */
 @font-face {
-    font-family: 'RadamaDisplayDemo'; /* Le nom que vous donnez à la police */
-    src: url('RadamaDisplayDemo.otf') format('opentype'); /* Correction du format pour .otf */
+    font-family: 'RadamaDisplayDemo'; /* Nom exact déclaré */
+    src: url('RadamaDisplayDemo.otf') format('opentype'); /* Format corrigé pour .otf */
     font-weight: normal;
     font-style: normal;
 }
 
 :root {
-    /* Couleurs */
     --bg-color: #ffffff;
     --text-color: #121213;
     --border-color: #d3d6da;
@@ -22,8 +21,8 @@
     --color-absent: #3a3a3c;
     --color-ui-yellow: #b59f3b;
     --color-error: #f85149;
-
-    /* Correction du nom ici pour correspondre à @font-face */
+    
+    /* CORRECTION : Le nom doit être identique à celui du @font-face ci-dessus */
     --main-font: 'RadamaDisplayDemo', Arial, sans-serif;
 }
 
@@ -31,12 +30,12 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
-    font-family: var(--main-font); /* Applique la police à tout le corps */
+    font-family: var(--main-font); /* Applique la police au texte général */
 }
 
-/* On force l'application sur les éléments spécifiques qui ont parfois leur propre police par défaut */
-button, input, .cell, .key, .welcome-box h2 {
-    font-family: var(--main-font);
+/* Force l'application sur les éléments qui ont souvent leur propre police par défaut */
+h1, h2, .cell, .key, button, #countdown {
+    font-family: var(--main-font) !important;
 }
 
 /* =========================================
