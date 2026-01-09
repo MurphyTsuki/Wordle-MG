@@ -356,3 +356,21 @@ h1 {
     transform: scaleY(0.005) scaleX(0);
   }
 }
+
+/* Style pour le conteneur du compte à rebours */
+#countdown-container {
+    background: rgba(83, 141, 78, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #538d4e;
+    margin-top: 20px;
+}
+
+/* Style pour les chiffres du chrono */
+#countdown {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.5rem;
+    display: block;
+    margin-top: 5px;
+    letter-spacing: 2px;
+}
