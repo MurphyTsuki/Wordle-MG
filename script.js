@@ -43,34 +43,21 @@ function setupWordData() {
           </p>
         `;
         welcomeEl.classList.remove("hidden");
-        startCountdown(); // Lancement du chrono
+        startCountdown(); 
       }
     }, 200);
-  }
-}
-
-  // Chargement des mots
-  if (typeof MOTS_MALGACHES !== 'undefined') {
-    SOLUTIONS = MOTS_MALGACHES;
-    ALLOWED_WORDS = MOTS_MALGACHES;
-    // Note : Idéalement, il faudrait que le SECRET_WORD soit le même pour tout le monde chaque jour
-    SECRET_WORD = SOLUTIONS[Math.floor(Math.random() * SOLUTIONS.length)];
-  } else {
-    SOLUTIONS = ["AKANY"]; 
-    SECRET_WORD = "AKANY";
   }
 }
 
 /* =========================================
    2. ÉTAT DU JEU & ÉLÉMENTS DOM
    ========================================= */
-// Initialisation des statistiques
-
 let stats = JSON.parse(localStorage.getItem("wordle_stats")) || {
   gamesPlayed: 0,
   gamesWon: 0,
   currentStreak: 0,
-  lastPlayedDate: null // Pour vérifier si le joueur a joué aujourd'hui
+  lastPlayedDate: null,
+  isFinishedToday: false
 };
 
 let currentRow = 0;
@@ -154,7 +141,6 @@ function addSpecialKey(label, action, parent) {
    ========================================= */
 
 document.addEventListener("keydown", (e) => {
-  // 1. Fermeture de l'écran d'accueil
   if (welcomeEl && !welcomeEl.classList.contains("hidden")) {
     if (e.key === "Enter" || e.key === "Escape") {
       startBtn.click();
@@ -166,8 +152,6 @@ document.addEventListener("keydown", (e) => {
 
   let key = "";
 
-  // 2. TRADUCTION PAR POSITION PHYSIQUE (Scancode)
-  // On ignore la langue du système et on regarde où le doigt appuie
   if (isAzerty) {
     const codeMap = {
       'KeyQ': 'A', 'KeyW': 'Z', 'KeyE': 'E', 'KeyR': 'R', 'KeyT': 'T', 'KeyY': 'Y', 'KeyU': 'U', 'KeyI': 'I', 'KeyO': 'O', 'KeyP': 'P',
@@ -176,17 +160,14 @@ document.addEventListener("keydown", (e) => {
     };
     key = codeMap[e.code] || "";
   } else {
-    // Mode QWERTY standard
     if (/^Key[A-Z]$/.test(e.code)) {
       key = e.code.replace('Key', '');
     }
   }
 
-  // Touches spéciales (communes aux deux modes)
   if (e.key === "Enter") key = "ENTER";
   if (e.key === "Backspace") key = "BACKSPACE";
 
-  // 3. Logique de saisie
   if (key === "ENTER") {
     submitGuess();
   } else if (key === "BACKSPACE") {
@@ -195,7 +176,6 @@ document.addEventListener("keydown", (e) => {
     addLetter(key);
   }
 
-  // 4. Animation de la touche virtuelle
   const keyEl = keyElements[key];
   if (keyEl) {
     keyEl.classList.add("pressed");
@@ -248,26 +228,24 @@ function submitGuess() {
 
   checkGuess(guess);
 
-  // --- VICTOIRE ---
- if (guess === SECRET_WORD) {
-  isGameOver = true;
-  updateStats(true);
-  saveEndOfDay();
-  setTimeout(() => setupWordData(), 1500); // Relance setup pour afficher l'écran de fin
-  return;
-}
+  if (guess === SECRET_WORD) {
+    isGameOver = true;
+    updateStats(true);
+    saveEndOfDay();
+    setTimeout(() => setupWordData(), 1500); 
+    return;
+  }
 
   currentRow++;
   currentCol = 0;
 
-  // --- DÉFAITE ---
   if (currentRow === MAX_TRIES) {
-  isGameOver = true;
-  updateStats(false);
-  saveEndOfDay();
-  setTimeout(() => setupWordData(), 1500); // Relance setup pour afficher l'écran de fin
-}
-} // <--- L'accolade qui manquait ici !
+    isGameOver = true;
+    updateStats(false);
+    saveEndOfDay();
+    setTimeout(() => setupWordData(), 1500); 
+  }
+} 
 
 function checkGuess(guess) {
   const secret = SECRET_WORD.split("");
@@ -303,7 +281,11 @@ function handleVirtualKey(letter) {
 }
 
 function updateStats(isWin) {
-  const today = new Date().toLocaleDateString();
+  const now = new Date();
+  const tzOffset = 3 * 60;
+  const localTime = new Date(now.getTime() + (tzOffset + now.getTimezoneOffset()) * 60000);
+  const todayLabel = localTime.toLocaleDateString();
+
   stats.gamesPlayed++;
   
   if (isWin) {
@@ -313,7 +295,7 @@ function updateStats(isWin) {
     stats.currentStreak = 0;
   }
 
-  stats.lastPlayedDate = today;
+  stats.lastPlayedDate = todayLabel;
   localStorage.setItem("wordle_stats", JSON.stringify(stats));
   
   setTimeout(() => showStatsAlert(isWin), 1500);
@@ -325,8 +307,6 @@ function updateStats(isWin) {
 
 function showStatsAlert(isWin) {
   const title = isWin ? "🎉 Bravo !" : `❌ Perdu ! Le mot était : ${SECRET_WORD}`;
-  
-  // Construction du message avec les données de l'objet 'stats'
   const message = `
     ${title}
     
@@ -335,7 +315,6 @@ function showStatsAlert(isWin) {
     • Victoires : ${stats.gamesWon}
     • Série actuelle : ${stats.currentStreak} 🔥
   `;
-  
   alert(message);
 }
 
@@ -377,11 +356,9 @@ function startCountdown() {
 
   const timer = setInterval(() => {
     const now = new Date();
-    // Heure actuelle à Antananarivo
     const tzOffset = 3 * 60;
     const localTime = new Date(now.getTime() + (tzOffset + now.getTimezoneOffset()) * 60000);
     
-    // Calcul de minuit prochain à Antananarivo
     const tomorrow = new Date(localTime);
     tomorrow.setHours(24, 0, 0, 0); 
     
@@ -389,11 +366,10 @@ function startCountdown() {
 
     if (diff <= 0) {
       clearInterval(timer);
-      location.reload(); // Recharge la page pour libérer le nouveau mot
+      location.reload(); 
       return;
     }
 
-    // Formatage HH:MM:SS
     const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
     const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
     const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
@@ -411,7 +387,6 @@ initKeyboard();
 
 if (layoutBtn) layoutBtn.textContent = isAzerty ? "Q" : "A";
 
-// On n'affiche l'écran de bienvenue automatique que si le jeu n'est pas déjà fini
 if (!isGameOver) {
   setTimeout(() => {
     if (welcomeEl) welcomeEl.classList.remove("hidden");
