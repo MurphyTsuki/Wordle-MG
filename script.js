@@ -11,14 +11,17 @@ let isAzerty = true;
 
 function setupWordData() {
   const today = new Date().toLocaleDateString();
-  
-  // Si le joueur a déjà gagné aujourd'hui
-  if (stats.lastPlayedDate === today && stats.currentStreak > 0) {
-    // Vous pouvez ici désactiver le clavier ou afficher un message
-    console.log("Reviens demain pour un nouveau mot !");
+
+  // Si le joueur a déjà fini aujourd'hui, on bloque le jeu
+  if (stats.lastPlayedDate === today && stats.isFinishedToday) {
+    isGameOver = true; // Empêche la saisie
+    setTimeout(() => {
+      messageEl.textContent = "Miverena rahampitso indray!";
+      messageEl.classList.add("show");
+    }, 500);
   }
-   
-   if (typeof MOTS_MALGACHES !== 'undefined') {
+
+  if (typeof MOTS_MALGACHES !== 'undefined') {
     SOLUTIONS = MOTS_MALGACHES;
     ALLOWED_WORDS = MOTS_MALGACHES;
     SECRET_WORD = SOLUTIONS[Math.floor(Math.random() * SOLUTIONS.length)];
@@ -32,6 +35,12 @@ function setupWordData() {
    2. ÉTAT DU JEU & ÉLÉMENTS DOM
    ========================================= */
 // Initialisation des statistiques
+
+let stats = JSON.parse(localStorage.getItem("wordle_stats")) || {
+  lastPlayedDate: null,
+  isFinishedToday: false
+};
+
 let stats = JSON.parse(localStorage.getItem("wordle_stats")) || {
   gamesPlayed: 0,
   gamesWon: 0,
@@ -204,7 +213,7 @@ function removeLetter() {
 }
 
 function submitGuess() {
-  if (currentCol < WORD_LENGTH) return;
+   if (currentCol < WORD_LENGTH) return;
   const guess = grid[currentRow].map(cell => cell.textContent).join("").toUpperCase();
 
   if (!ALLOWED_WORDS.includes(guess)) {
@@ -216,19 +225,20 @@ function submitGuess() {
 
   // --- VICTOIRE ---
   if (guess === SECRET_WORD) {
-    isGameOver = true;
-    setTimeout(() => updateStats(true), 1500); // Appelle l'étape 2/4
-    return;
-  }
+  isGameOver = true;
+  saveEndOfDay(); // On enregistre la fin
+  setTimeout(() => alert("🎉 Bravo !"), 1000);
+  return;
+}
 
   currentRow++;
   currentCol = 0;
 
   // --- DÉFAITE ---
-  if (currentRow === MAX_TRIES) {
-    isGameOver = true;
-    setTimeout(() => updateStats(false), 1500); // Appelle l'étape 2/4
-  }
+ if (currentRow === MAX_TRIES) {
+  isGameOver = true;
+  saveEndOfDay(); // On enregistre la fin
+  setTimeout(() => alert(`❌ Perdu ! Mot : ${SECRET_WORD}`), 1000);
 }
 
 function checkGuess(guess) {
@@ -324,6 +334,12 @@ function showInvalidWord() {
     messageEl.classList.remove("show", "message-error");
     grid[currentRow].forEach(cell => cell.classList.remove("invalid"));
   }, 2500);
+}
+
+function saveEndOfDay() {
+  stats.lastPlayedDate = new Date().toLocaleDateString();
+  stats.isFinishedToday = true;
+  localStorage.setItem("wordle_stats", JSON.stringify(stats));
 }
 
 /* =========================================
