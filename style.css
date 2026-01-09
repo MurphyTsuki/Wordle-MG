@@ -1,29 +1,31 @@
 /* =========================================
    1. VARIABLES & CONFIGURATION
    ========================================= */
+/* Couleurs par défaut (Mode Clair) */
 :root {
-  /* Palette de couleurs */
-  --bg-color: #121213;
-  --text-color: white;
-  --border-color: #3a3a3c;
-  
-  /* Couleurs d'état (Jeu) */
-  --color-correct: #538d4e;   /* Vert */
-  --color-present: #b59f3b;   /* Jaune moutarde (Grille) */
-  --color-absent: #3a3a3c;    /* Gris foncé */
-  
-  /* Couleurs d'interface (UI) */
-  --color-ui-yellow: #cd8729; /* Orange/Jaune (Clavier/Titre) */
-  --color-error: #f85149;
-  --key-bg: #818384;
+    --bg-color: #ffffff;
+    --text-color: #121213;
+    --border-color: #d3d6da;
+    --key-bg: #d3d6da;
+    --grid-bg: #ffffff;
+}
+
+/* Couleurs pour le Mode Sombre (détecté automatiquement) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #121213;
+        --text-color: #ffffff;
+        --border-color: #3a3a3c;
+        --key-bg: #818384;
+        --grid-bg: #121213;
+    }
 }
 
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: var(--bg-color);
-  color: var(--text-color);
-  text-align: center;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transition douce */
+    /* ... vos autres styles ... */
 }
 
 /* =========================================
@@ -51,6 +53,9 @@ body {
 /* Animation de la boîte */
 .welcome-box {
   background: #1e1e1f;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
   padding: 24px;
   border-radius: 10px;
   width: 90%;
@@ -219,6 +224,8 @@ h1 {
   width: 45px;
   height: 45px;
   border: 2px solid var(--border-color);
+  background-color: var(--grid-bg);
+  color: var(--text-color);
   font-size: 24px;
   font-weight: bold;
   text-transform: uppercase;
@@ -247,6 +254,8 @@ h1 {
   padding: 10px;
   min-width: 32px;
   background: var(--key-bg);
+  background-color: var(--key-bg);
+  color: var(--text-color);
   border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
