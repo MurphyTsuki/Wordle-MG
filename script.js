@@ -10,16 +10,26 @@ let SECRET_WORD = "";
 let isAzerty = true; 
 
 function setupWordData() {
-  const today = new Date().toLocaleDateString();
+  const now = new Date();
+  const tzOffset = 3 * 60; 
+  const localTime = new Date(now.getTime() + (tzOffset + now.getTimezoneOffset()) * 60000);
+  const startOfReference = new Date(2024, 0, 1);
+  const dayIndex = Math.floor((localTime - startOfReference) / (1000 * 60 * 60 * 24));
 
-  // Vérification : Le joueur a-t-il déjà fini aujourd'hui ?
-  if (stats.lastPlayedDate === today && stats.isFinishedToday) {
-    isGameOver = true; // Bloque les entrées clavier
-    
-    // On modifie l'écran de bienvenue pour bloquer le jeu
+  if (typeof MOTS_MALGACHES !== 'undefined') {
+    SOLUTIONS = MOTS_MALGACHES;
+    ALLOWED_WORDS = MOTS_MALGACHES;
+    const wordIndex = dayIndex % SOLUTIONS.length;
+    SECRET_WORD = SOLUTIONS[wordIndex].toUpperCase();
+  } else {
+    SECRET_WORD = "AKANY";
+  }
+
+  const todayLabel = localTime.toLocaleDateString();
+  if (stats.lastPlayedDate === todayLabel && stats.isFinishedToday) {
+    isGameOver = true;
     setTimeout(() => {
       if (welcomeEl) {
-        // On change le texte de l'écran de bienvenue
         const welcomeBox = welcomeEl.querySelector(".welcome-box");
         welcomeBox.innerHTML = `
           <h2 style="font-size: 2rem; margin-bottom: 20px;">Miverena rahampitso indray!</h2>
@@ -28,11 +38,16 @@ function setupWordData() {
             <p>📊 Stats : ${stats.gamesPlayed} lalao</p>
             <p>🔥 Streak : ${stats.currentStreak}</p>
           </div>
+          <p id="countdown-container" style="margin-top: 20px; font-weight: bold; color: #538d4e;">
+            Teny vaovao afaka <span id="countdown">--:--:--</span>
+          </p>
         `;
-        welcomeEl.classList.remove("hidden"); // On force l'affichage
+        welcomeEl.classList.remove("hidden");
+        startCountdown(); // Lancement du chrono
       }
     }, 200);
   }
+}
 
   // Chargement des mots
   if (typeof MOTS_MALGACHES !== 'undefined') {
@@ -208,10 +223,6 @@ layoutBtn.addEventListener("click", () => {
    5. LOGIQUE MÉTIER
    ========================================= */
 
-/* =========================================
-   5. LOGIQUE MÉTIER
-   ========================================= */
-
 function addLetter(letter) {
   if (currentCol < WORD_LENGTH) {
     grid[currentRow][currentCol].textContent = letter;
@@ -238,23 +249,24 @@ function submitGuess() {
   checkGuess(guess);
 
   // --- VICTOIRE ---
-  if (guess === SECRET_WORD) {
-    isGameOver = true;
-    updateStats(true); // Appelle la mise à jour des stats
-    saveEndOfDay();
-    return;
-  }
+ if (guess === SECRET_WORD) {
+  isGameOver = true;
+  updateStats(true);
+  saveEndOfDay();
+  setTimeout(() => setupWordData(), 1500); // Relance setup pour afficher l'écran de fin
+  return;
+}
 
   currentRow++;
   currentCol = 0;
 
   // --- DÉFAITE ---
   if (currentRow === MAX_TRIES) {
-    isGameOver = true;
-    updateStats(false); // Appelle la mise à jour des stats
-    saveEndOfDay();
-    setTimeout(() => alert(`❌ Perdu ! Mot : ${SECRET_WORD}`), 1000);
-  }
+  isGameOver = true;
+  updateStats(false);
+  saveEndOfDay();
+  setTimeout(() => setupWordData(), 1500); // Relance setup pour afficher l'écran de fin
+}
 } // <--- L'accolade qui manquait ici !
 
 function checkGuess(guess) {
@@ -350,9 +362,44 @@ function showInvalidWord() {
 }
 
 function saveEndOfDay() {
-  stats.lastPlayedDate = new Date().toLocaleDateString();
+  const now = new Date();
+  const tzOffset = 3 * 60;
+  const localTime = new Date(now.getTime() + (tzOffset + now.getTimezoneOffset()) * 60000);
+  
+  stats.lastPlayedDate = localTime.toLocaleDateString();
   stats.isFinishedToday = true;
   localStorage.setItem("wordle_stats", JSON.stringify(stats));
+}
+
+function startCountdown() {
+  const countdownEl = document.getElementById("countdown");
+  if (!countdownEl) return;
+
+  const timer = setInterval(() => {
+    const now = new Date();
+    // Heure actuelle à Antananarivo
+    const tzOffset = 3 * 60;
+    const localTime = new Date(now.getTime() + (tzOffset + now.getTimezoneOffset()) * 60000);
+    
+    // Calcul de minuit prochain à Antananarivo
+    const tomorrow = new Date(localTime);
+    tomorrow.setHours(24, 0, 0, 0); 
+    
+    const diff = tomorrow - localTime;
+
+    if (diff <= 0) {
+      clearInterval(timer);
+      location.reload(); // Recharge la page pour libérer le nouveau mot
+      return;
+    }
+
+    // Formatage HH:MM:SS
+    const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
+    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+    const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+
+    countdownEl.textContent = `${h}:${m}:${s}`;
+  }, 1000);
 }
 
 /* =========================================
