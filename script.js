@@ -52,11 +52,6 @@ function setupWordData() {
 // Initialisation des statistiques
 
 let stats = JSON.parse(localStorage.getItem("wordle_stats")) || {
-  lastPlayedDate: null,
-  isFinishedToday: false
-};
-
-let stats = JSON.parse(localStorage.getItem("wordle_stats")) || {
   gamesPlayed: 0,
   gamesWon: 0,
   currentStreak: 0,
@@ -213,6 +208,10 @@ layoutBtn.addEventListener("click", () => {
    5. LOGIQUE MÉTIER
    ========================================= */
 
+/* =========================================
+   5. LOGIQUE MÉTIER
+   ========================================= */
+
 function addLetter(letter) {
   if (currentCol < WORD_LENGTH) {
     grid[currentRow][currentCol].textContent = letter;
@@ -228,7 +227,7 @@ function removeLetter() {
 }
 
 function submitGuess() {
-   if (currentCol < WORD_LENGTH) return;
+  if (currentCol < WORD_LENGTH) return;
   const guess = grid[currentRow].map(cell => cell.textContent).join("").toUpperCase();
 
   if (!ALLOWED_WORDS.includes(guess)) {
@@ -240,21 +239,23 @@ function submitGuess() {
 
   // --- VICTOIRE ---
   if (guess === SECRET_WORD) {
-  isGameOver = true;
-  saveEndOfDay(); // On enregistre la fin
-  setTimeout(() => alert("🎉 Bravo !"), 1000);
-  return;
-}
+    isGameOver = true;
+    updateStats(true); // Appelle la mise à jour des stats
+    saveEndOfDay();
+    return;
+  }
 
   currentRow++;
   currentCol = 0;
 
   // --- DÉFAITE ---
- if (currentRow === MAX_TRIES) {
-  isGameOver = true;
-  saveEndOfDay(); // On enregistre la fin
-  setTimeout(() => alert(`❌ Perdu ! Mot : ${SECRET_WORD}`), 1000);
-}
+  if (currentRow === MAX_TRIES) {
+    isGameOver = true;
+    updateStats(false); // Appelle la mise à jour des stats
+    saveEndOfDay();
+    setTimeout(() => alert(`❌ Perdu ! Mot : ${SECRET_WORD}`), 1000);
+  }
+} // <--- L'accolade qui manquait ici !
 
 function checkGuess(guess) {
   const secret = SECRET_WORD.split("");
@@ -291,9 +292,6 @@ function handleVirtualKey(letter) {
 
 function updateStats(isWin) {
   const today = new Date().toLocaleDateString();
-  
-  // Si le joueur a déjà joué aujourd'hui, on peut choisir de ne pas compter 
-  // (ou de compter si vous autorisez plusieurs parties par jour)
   stats.gamesPlayed++;
   
   if (isWin) {
@@ -306,7 +304,7 @@ function updateStats(isWin) {
   stats.lastPlayedDate = today;
   localStorage.setItem("wordle_stats", JSON.stringify(stats));
   
-  showStatsAlert(isWin);
+  setTimeout(() => showStatsAlert(isWin), 1500);
 }
 
 /* =========================================
@@ -360,7 +358,7 @@ function saveEndOfDay() {
 /* =========================================
    7. LANCEMENT
    ========================================= */
-etupWordData();
+setupWordData();
 initGrid();
 initKeyboard();
 
