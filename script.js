@@ -12,18 +12,33 @@ let isAzerty = true;
 function setupWordData() {
   const today = new Date().toLocaleDateString();
 
-  // Si le joueur a déjà fini aujourd'hui, on bloque le jeu
+  // Vérification : Le joueur a-t-il déjà fini aujourd'hui ?
   if (stats.lastPlayedDate === today && stats.isFinishedToday) {
-    isGameOver = true; // Empêche la saisie
+    isGameOver = true; // Bloque les entrées clavier
+    
+    // On modifie l'écran de bienvenue pour bloquer le jeu
     setTimeout(() => {
-      messageEl.textContent = "Miverena rahampitso indray!";
-      messageEl.classList.add("show");
-    }, 500);
+      if (welcomeEl) {
+        // On change le texte de l'écran de bienvenue
+        const welcomeBox = welcomeEl.querySelector(".welcome-box");
+        welcomeBox.innerHTML = `
+          <h2 style="font-size: 2rem; margin-bottom: 20px;">Miverena rahampitso indray!</h2>
+          <p>Efa nahavita ny lalao ianao androany.</p>
+          <div id="mini-stats" style="margin-top: 20px; text-align: left; background: #121213; padding: 15px; border-radius: 8px;">
+            <p>📊 Stats : ${stats.gamesPlayed} lalao</p>
+            <p>🔥 Streak : ${stats.currentStreak}</p>
+          </div>
+        `;
+        welcomeEl.classList.remove("hidden"); // On force l'affichage
+      }
+    }, 200);
   }
 
+  // Chargement des mots
   if (typeof MOTS_MALGACHES !== 'undefined') {
     SOLUTIONS = MOTS_MALGACHES;
     ALLOWED_WORDS = MOTS_MALGACHES;
+    // Note : Idéalement, il faudrait que le SECRET_WORD soit le même pour tout le monde chaque jour
     SECRET_WORD = SOLUTIONS[Math.floor(Math.random() * SOLUTIONS.length)];
   } else {
     SOLUTIONS = ["AKANY"]; 
@@ -345,8 +360,15 @@ function saveEndOfDay() {
 /* =========================================
    7. LANCEMENT
    ========================================= */
-setupWordData();
+etupWordData();
 initGrid();
 initKeyboard();
-if(layoutBtn) layoutBtn.textContent = isAzerty ? "Q" : "A";
-setTimeout(() => welcomeEl.classList.remove("hidden"), 100);
+
+if (layoutBtn) layoutBtn.textContent = isAzerty ? "Q" : "A";
+
+// On n'affiche l'écran de bienvenue automatique que si le jeu n'est pas déjà fini
+if (!isGameOver) {
+  setTimeout(() => {
+    if (welcomeEl) welcomeEl.classList.remove("hidden");
+  }, 100);
+}
